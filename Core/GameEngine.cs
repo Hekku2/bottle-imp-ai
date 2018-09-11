@@ -33,36 +33,12 @@ namespace Core
 				//Deal cards
 				var playerCards = Dealer.Deal(CardCollection.AllCards(), _players.Count());
 				var minHandSize = playerCards.Min(hand => hand.Cards().Count());
-
-				// Ask for initial moves
-				var initialMoves = playerCards.Select((hand, i) => 
-				{
-					var initialMove = _players[i].RoundStart(hand.Cards());
-					if (!InitialMoveRule.IsLegal(hand, initialMove))
-					{
-						throw new Exception("Illegal move");
-					}
-					hand.RemoveCard(initialMove.ToBottle);
-					hand.RemoveCard(initialMove.ToLeft);
-					hand.RemoveCard(initialMove.ToRight);
-					return initialMove;
-				}).ToArray();
+				
+				InitialMove[] initialMoves = DoInitialMoves(playerCards);
+				GiveInitialCards(playerCards, initialMoves);
 
 				//Set bottle cards
 				var bottleTax = initialMoves.Sum(move => move.ToBottle.Score);
-
-				//Give player cards
-				for (int i = 0; i < _players.Count(); i++)
-				{
-					var leftPlayerIndex = (i - 1) < 0 ? _players.Length-1 : i;
-					var rightPlayerIndex = (i + 1) % _players.Length;
-
-					var cardFromLeft = initialMoves[leftPlayerIndex].ToRight;
-					var cardFromRight = initialMoves[rightPlayerIndex].ToLeft;
-					_players[i].ReceivedCards(cardFromLeft, cardFromRight);
-					playerCards[i].AddCard(cardFromLeft);
-					playerCards[i].AddCard(cardFromRight);
-				}
 
 				var scoreCount = new ScoreCount(_players.Count());
 				var bottlePrice = 19;
@@ -74,27 +50,13 @@ namespace Core
 				{
 					// Create player order
 					var order = Enumerable.Range(0, _players.Count())
-						.Select(index => 
+						.Select(index =>
 						{
 							var current = (startingPlayerIndex + index) % _players.Length;
 							return new Seat(current, _players[current]);
 						});
 
-					// Ask move from players
-					var playedCards = new List<Play>();
-					foreach (var seat in order)
-					{
-						var card = seat.Player.Play(playedCards.Select(p => p.Card).ToArray());
-						//Check rule validity
-						var playerHand = playerCards[seat.Index];
-						if (!PlayRule.IsLegal(playerHand, card, playedCards.Select(p => p.Card).FirstOrDefault()))
-						{
-							throw new Exception("Illegal move");
-						}
-						//Remove card from player
-						playerHand.RemoveCard(card);
-						playedCards.Add(new Play(seat.Index, card));
-					}
+					List<Play> playedCards = AskMoves(playerCards, order);
 
 					// Decide winner
 					Play winning = new Play(startingPlayerIndex, null);
@@ -119,13 +81,70 @@ namespace Core
 					}
 				}
 
-				// TODO set bottle owner scores
-				for(int i = 0; i < _players.Count(); i++)
+				for (int i = 0; i < _players.Count(); i++)
 				{
-					finalScores[i] += scoreCount.Score(i);
+					if (bottleOwner.HasValue && bottleOwner.Value == i)
+					{
+						finalScores[i] -= bottleTax;
+					}
+					else
+					{
+						finalScores[i] += scoreCount.Score(i);
+					}
 				}
 			}
 			return finalScores;
+		}
+
+		private static List<Play> AskMoves(Hand[] playerCards, IEnumerable<Seat> order)
+		{
+			var playedCards = new List<Play>();
+			foreach (var seat in order)
+			{
+				var card = seat.Player.Play(playedCards.Select(p => p.Card).ToArray());
+				//Check rule validity
+				var playerHand = playerCards[seat.Index];
+				if (!PlayRule.IsLegal(playerHand, card, playedCards.Select(p => p.Card).FirstOrDefault()))
+				{
+					throw new Exception("Illegal move");
+				}
+				//Remove card from player
+				playerHand.RemoveCard(card);
+				playedCards.Add(new Play(seat.Index, card));
+			}
+
+			return playedCards;
+		}
+
+		private void GiveInitialCards(Hand[] playerCards, InitialMove[] initialMoves)
+		{
+			for (int i = 0; i < _players.Count(); i++)
+			{
+				var leftPlayerIndex = (i - 1) < 0 ? _players.Length - 1 : i;
+				var rightPlayerIndex = (i + 1) % _players.Length;
+
+				var cardFromLeft = initialMoves[leftPlayerIndex].ToRight;
+				var cardFromRight = initialMoves[rightPlayerIndex].ToLeft;
+				_players[i].ReceivedCards(cardFromLeft, cardFromRight);
+				playerCards[i].AddCard(cardFromLeft);
+				playerCards[i].AddCard(cardFromRight);
+			}
+		}
+
+		private InitialMove[] DoInitialMoves(Hand[] playerCards)
+		{
+			return playerCards.Select((hand, i) =>
+			{
+				var initialMove = _players[i].RoundStart(hand.Cards());
+				if (!InitialMoveRule.IsLegal(hand, initialMove))
+				{
+					throw new Exception("Illegal move");
+				}
+				hand.RemoveCard(initialMove.ToBottle);
+				hand.RemoveCard(initialMove.ToLeft);
+				hand.RemoveCard(initialMove.ToRight);
+				return initialMove;
+			}).ToArray();
 		}
 	}
 }

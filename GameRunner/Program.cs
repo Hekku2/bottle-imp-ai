@@ -14,7 +14,7 @@ namespace GameRunner
 				new AiCandidates.Random(),
 				new AiCandidates.Random(),
 			};
-			var engine = new GameEngine(1, ais);
+			var engine = new GameEngine(200, ais);
 			var result = engine.Run();
 
 			Console.WriteLine($"Result: {result[0]}, {result[1]}, {result[2]}, {result[3]}");
