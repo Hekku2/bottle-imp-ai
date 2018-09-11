@@ -29,12 +29,18 @@ namespace Core
 			return types.Contains(color);
 		}
 
-		public void RemoveCard(Card card)
+		public void AddCard(Card card)
+		{
+			_cards.Add(card);
+		}
+
+		public Card RemoveCard(Card card)
 		{
 			if (!_cards.Remove(card))
 			{
 				throw new ArgumentException("Trying to remove card that doesn't exist!");
 			};
+			return card;
 		}
 
 		public Card[] Cards()

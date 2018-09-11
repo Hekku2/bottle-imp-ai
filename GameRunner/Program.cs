@@ -1,12 +1,23 @@
-﻿using System;
+﻿using Core;
+using System;
 
 namespace GameRunner
 {
-	class Program
+	public class Program
 	{
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			var ais = new[]
+			{
+				new AiCandidates.Random(),
+				new AiCandidates.Random(),
+				new AiCandidates.Random(),
+				new AiCandidates.Random(),
+			};
+			var engine = new GameEngine(1, ais);
+			var result = engine.Run();
+
+			Console.WriteLine($"Result: {result[0]}, {result[1]}, {result[2]}, {result[3]}");
 		}
 	}
 }
