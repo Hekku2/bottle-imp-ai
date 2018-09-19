@@ -1,5 +1,6 @@
 ﻿using Core;
 using System;
+using System.Linq;
 
 namespace GameRunner
 {
@@ -7,6 +8,7 @@ namespace GameRunner
 	{
 		public static void Main(string[] args)
 		{
+			const int totalRounds = 200;
 			var ais = new[]
 			{
 				new AiCandidates.Random(),
@@ -14,10 +16,18 @@ namespace GameRunner
 				new AiCandidates.Random(),
 				new AiCandidates.Random(),
 			};
-			var engine = new GameEngine(200, ais);
+			var engine = new GameEngine(totalRounds, ais);
 			var result = engine.Run();
 
-			Console.WriteLine($"Result: {result[0]}, {result[1]}, {result[2]}, {result[3]}");
+			var total = result.Sum();
+			var percents = result.Select(r => Percent(total, r)).ToList();
+
+			Console.WriteLine($"Result: {percents[0]:0.00}%, {percents[1]:0.00}%, {percents[2]:0.00}%, {percents[3]:0.00}%");
+		}
+
+		private static double Percent(int total, int score)
+		{
+			return (score / (total*1.0)) * 100;
 		}
 	}
 }
