@@ -35,7 +35,6 @@ namespace AiCandidates
 			}
 			
 			return _currentHand.RemoveCard(_currentHand.Cards().FirstOrDefault());
-			throw new NotImplementedException();
 		}
 
 		public void ReceivedCards(Card fromLeft, Card fromRight)

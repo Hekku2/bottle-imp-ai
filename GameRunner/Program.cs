@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using AiCandidates;
+using Core;
 using System;
 using System.Linq;
 
@@ -8,10 +9,12 @@ namespace GameRunner
 	{
 		public static void Main(string[] args)
 		{
+			var stats = new Stats();
+
 			const int totalRounds = 200;
-			var ais = new[]
+			var ais = new IGameAi[]
 			{
-				new AiCandidates.Random(),
+				new FirstCandidate(stats),
 				new AiCandidates.Random(),
 				new AiCandidates.Random(),
 				new AiCandidates.Random(),
@@ -23,6 +26,8 @@ namespace GameRunner
 			var percents = result.Select(r => Percent(total, r)).ToList();
 
 			Console.WriteLine($"Result: {percents[0]:0.00}%, {percents[1]:0.00}%, {percents[2]:0.00}%, {percents[3]:0.00}%");
+
+			Console.WriteLine($"Round won {stats.RoundWins}, lost {stats.RoundLoses}, undecided paths {stats.UndecidedPath}");
 		}
 
 		private static double Percent(int total, int score)
