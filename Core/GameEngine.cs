@@ -72,6 +72,7 @@ namespace Core
 						bottleOwner = winning.Index;
 						bottlePrice = winning.Card.Number;
 					}
+					startingPlayerIndex = winning.Index;
 					scoreCount.Add(winning.Index, playedCards.Select(p => p.Card).ToList());
 
 					var result = new RoundResult(bottlePrice, playedCards.Select(p => p.Card).ToArray());
