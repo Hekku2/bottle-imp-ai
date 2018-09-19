@@ -24,6 +24,12 @@ namespace Core.Internal
 			return hands;
 		}
 
+		/// <summary>
+		/// Fisher-Yated suffle,
+		/// from https://stackoverflow.com/questions/273313/randomize-a-listt
+		/// </summary>
+		/// <typeparam name="T">Type</typeparam>
+		/// <param name="list">Suffled list</param>
 		private static void Shuffle<T>(IList<T> list)
 		{
 			int n = list.Count;
