@@ -39,53 +39,40 @@ namespace AiCandidates
 			if (startingCard == null)
 			{
 				_stats.RoundWins += 1;
-
-				var highestCard = playableCards
-					.OrderByDescending(card => card.Number)
-					.First();
-				return _currentHand.RemoveCard(highestCard);
+				return _currentHand.RemoveCard(playableCards.HighestCard());
 			}
 			_stats.RoundLoses += 1;
 
 			var winningCard = WinningCard(cardsPlayed);
 			if (winningCard.Number < _bottlePrice)
 			{
-				var myLowest = playableCards.OrderByDescending(card => card.Number).FirstOrDefault();
+				var myLowest = playableCards.LowestCard();
 				if (myLowest != null && myLowest.Number < winningCard.Number)
 				{
 					return _currentHand.RemoveCard(myLowest);
 				}
 
-				var lowestSafeCard = playableCards
-					.Where(card => card.Number > _bottlePrice)
-					.OrderBy(card => card.Number)
-					.FirstOrDefault();
+				var lowestSafeCard = playableCards.LowestSafeCard(_bottlePrice);
 				if (lowestSafeCard != null)
 				{
 					return _currentHand.RemoveCard(lowestSafeCard);
 				}
 
-				var highestDangerCard = playableCards.OrderByDescending(card => card.Number).First();
+				var highestDangerCard = playableCards.HighestCard();
 				return _currentHand.RemoveCard(highestDangerCard);
 			}
 
 			if (OthersHavePlayed(cardsPlayed))
 			{
 				var biggest = cardsPlayed.Max(card => card.Number);
-				var lowestWinningCard = playableCards
-					.Where(card => card.Number > biggest)
-					.OrderBy(card => card.Number)
-					.FirstOrDefault();
+				var lowestWinningCard = playableCards.LowestWinningCard(biggest);
 
 				if (lowestWinningCard != null)
 				{
 					return _currentHand.RemoveCard(lowestWinningCard);
 				}
 
-				var lowestSafeCard = playableCards
-					.Where(card => card.Number > _bottlePrice)
-					.OrderBy(card => card.Number)
-					.FirstOrDefault();
+				var lowestSafeCard = playableCards.LowestSafeCard(_bottlePrice);
 				if (lowestSafeCard != null)
 				{
 					return _currentHand.RemoveCard(lowestSafeCard);
@@ -93,7 +80,7 @@ namespace AiCandidates
 			}
 
 			_stats.UndecidedPath += 1;
-			return _currentHand.RemoveCard(playableCards.OrderByDescending(card => card.Number).First());
+			return _currentHand.RemoveCard(playableCards.HighestCard());
 		}
 
 		private Card WinningCard(Card[] cardsPlayed)
