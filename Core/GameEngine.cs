@@ -26,14 +26,17 @@ namespace Core
 			{
 				player.GameStart(_players.Count(), _rounds);
 			}
-			for (int x = 0; x < _rounds; x++)
+			for (int roundNumber = 0; roundNumber < _rounds; roundNumber++)
 			{
 				var cards = CardCollection.AllCards();
 
 				//Deal cards
 				var playerCards = Dealer.Deal(CardCollection.AllCards(), _players.Count());
 				var minHandSize = playerCards.Min(hand => hand.Cards().Count());
-				
+				var seats = Enumerable.Range(0, _players.Length).Select(i => {
+					return new Seat(i, _players[i], playerCards[i]);
+				}).ToArray();
+
 				InitialMove[] initialMoves = DoInitialMoves(playerCards);
 				GiveInitialCards(playerCards, initialMoves);
 
@@ -41,45 +44,13 @@ namespace Core
 				var bottleTax = initialMoves.Sum(move => move.ToBottle.Score);
 
 				var scoreCount = new ScoreCount(_players.Count());
-				var bottlePrice = 19;
 				int? bottleOwner = null;
 
-				// Decide starter
-				var startingPlayerIndex = 0;
+				TrickResult previousWinner = null;
 				for (int i = 0; i < minHandSize - 1; i++)
 				{
-					// Create player order
-					var order = Enumerable.Range(0, _players.Count())
-						.Select(index =>
-						{
-							var current = (startingPlayerIndex + index) % _players.Length;
-							return new Seat(current, _players[current]);
-						});
-
-					List<Play> playedCards = AskMoves(playerCards, order);
-
-					// Decide winner
-					Play winning = new Play(startingPlayerIndex, null);
-					foreach (var playedCard in playedCards)
-					{
-						if (IsWinningRule.Wins(bottlePrice, winning.Card, playedCard.Card))
-						{
-							winning = playedCard;
-						}
-					}
-					if (winning.Card.Number < bottlePrice)
-					{
-						bottleOwner = winning.Index;
-						bottlePrice = winning.Card.Number;
-					}
-					startingPlayerIndex = winning.Index;
-					scoreCount.Add(winning.Index, playedCards.Select(p => p.Card).ToList());
-
-					var result = new RoundResult(bottlePrice, playedCards.Select(p => p.Card).ToArray());
-					foreach (var player in _players)
-					{
-						player.RoundFinished(result);
-					}
+					previousWinner = TrickEngine.PlayTrick(previousWinner, seats);
+					scoreCount.Add(previousWinner.Winner.Index, previousWinner.WinnerPrice);
 				}
 
 				for (int i = 0; i < _players.Count(); i++)
@@ -96,6 +67,19 @@ namespace Core
 			}
 			return finalScores;
 		}
+
+		private static Play GetWinner(List<Play> playedCards, int bottlePrice)
+		{
+			Play winning = playedCards.First();
+			foreach (var playedCard in playedCards.Skip(1))
+			{
+				if (IsWinningRule.Wins(bottlePrice, winning.Card ?? null, playedCard.Card))
+				{
+					winning = playedCard;
+				}
+			}
+			return winning;
+		} 
 
 		private static List<Play> AskMoves(Hand[] playerCards, IEnumerable<Seat> order)
 		{
