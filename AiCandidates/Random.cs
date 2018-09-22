@@ -14,12 +14,12 @@ namespace AiCandidates
 		{
 		}
 
-		public void GameStart(int numberOfPlayers, int numberOfRounds)
+		public void GameStart(int numberOfPlayers, int numberOfRounds, int seatAtTable)
 		{
 			// Random doesnt care about this
 		}
 
-		public Card Play(Card[] cardsPlayed)
+        public Card Play(Card[] cardsPlayed)
 		{
 			var startingCard = cardsPlayed.FirstOrDefault();
 			if (startingCard == null)
@@ -43,7 +43,7 @@ namespace AiCandidates
 			_currentHand.AddCard(fromRight);
 		}
 
-		public void RoundFinished(RoundResult result)
+		public void TrickFinished(Core.External.TrickResult result)
 		{
 			//
 		}

@@ -1,6 +1,6 @@
 ﻿namespace Core.Internal
 {
-	public class Play
+	internal class Play
 	{
 		public int Index { get; }
 		public Card Card { get; }

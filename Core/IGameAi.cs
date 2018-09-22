@@ -7,7 +7,7 @@ public interface IGameAi
 	/// <summary>
 	/// Game setup information
 	/// </summary>
-	void GameStart(int numberOfPlayers, int numberOfRounds);
+	void GameStart(int numberOfPlayers, int numberOfRounds, int seatAtTable);
 
 	/// <summary>
 	/// Initial cards at the start of the round
@@ -24,5 +24,5 @@ public interface IGameAi
 
 	Card Play(Card[] cardsPlayed);
 
-	void RoundFinished(RoundResult result);
+	void TrickFinished(Core.External.TrickResult result);
 }

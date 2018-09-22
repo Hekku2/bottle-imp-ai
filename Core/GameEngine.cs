@@ -22,9 +22,9 @@ namespace Core
 			var finalScores = new int[_players.Count()];
 
 			//Inform about other players
-			foreach (var player in _players)
+			for (int seatIndex = 0; seatIndex < _players.Count(); seatIndex++)
 			{
-				player.GameStart(_players.Count(), _rounds);
+				_players[seatIndex].GameStart(_players.Count(), _rounds, seatIndex);
 			}
 			for (int roundNumber = 0; roundNumber < _rounds; roundNumber++)
 			{
@@ -44,7 +44,6 @@ namespace Core
 				var bottleTax = initialMoves.Sum(move => move.ToBottle.Score);
 
 				var scoreCount = new ScoreCount(_players.Count());
-				int? bottleOwner = null;
 
 				TrickResult previousWinner = null;
 				for (int i = 0; i < minHandSize - 1; i++)
@@ -55,7 +54,7 @@ namespace Core
 
 				for (int i = 0; i < _players.Count(); i++)
 				{
-					if (bottleOwner.HasValue && bottleOwner.Value == i)
+					if (previousWinner.BottleOwner.Index == i)
 					{
 						finalScores[i] -= bottleTax;
 					}

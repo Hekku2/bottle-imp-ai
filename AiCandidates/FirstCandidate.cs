@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Core;
 using Core.External;
+using Microsoft.Extensions.Logging;
 
 namespace AiCandidates
 {
@@ -15,6 +16,9 @@ namespace AiCandidates
 	/// </summary>
 	public class FirstCandidate : IGameAi
 	{
+		private readonly ILogger _logger;
+
+		private int _seatAtTable;
 		private int _numberOfPlayers;
 		private int _bottlePrice = 19;
 
@@ -22,13 +26,16 @@ namespace AiCandidates
 
 		private readonly Stats _stats;
 
-		public FirstCandidate(Stats stats)
+		public FirstCandidate(ILogger<FirstCandidate> logger, Stats stats)
 		{
+			_logger = logger;
 			_stats = stats;
 		}
 
-		public void GameStart(int numberOfPlayers, int numberOfRounds)
+		public void GameStart(int numberOfPlayers, int numberOfRounds, int seatAtTable)
 		{
+			_logger.LogInformation("Game started: {0} players, {1} rounds, seat at table: {2}", numberOfPlayers, numberOfRounds, seatAtTable);
+			_seatAtTable = seatAtTable;
 			_numberOfPlayers = numberOfPlayers;
 		}
 
@@ -129,8 +136,11 @@ namespace AiCandidates
 			_currentHand.AddCard(fromRight);
 		}
 
-		public void RoundFinished(RoundResult result)
+		public void TrickFinished(Core.External.TrickResult result)
 		{
+			var winningCard = WinningCard(result.PlayedCards);
+			var myCard = result.PlayedCards[_seatAtTable];
+			_logger.LogInformation("Round finished. Winning card {0}, my card {1}, bottle price {2}", winningCard, myCard, result.BottlePrice);
 			_bottlePrice = result.BottlePrice;
 		}
 

@@ -30,4 +30,9 @@ public class Card
 		hashCode = hashCode * -1521134295 + Number.GetHashCode();
 		return hashCode;
 	}
+
+	public override string ToString()
+	{
+		return $"[{Type,7} {Number,2} {Score,1}]";
+	}
 }

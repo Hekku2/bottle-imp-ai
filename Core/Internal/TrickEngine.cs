@@ -32,10 +32,10 @@ public class TrickEngine
             bottlePrice = winner.Card.Number;
         }
 
-        var result = new RoundResult(bottlePrice, playedCards.Select(p => p.Card).ToArray());
+        var result = new Core.External.TrickResult(bottlePrice, playedCards.Select(p => p.Card).ToArray());
         foreach (var seat in seats)
         {
-            seat.Player.RoundFinished(result);
+            seat.Player.TrickFinished(result);
         }
         return new TrickResult()
         {
