@@ -15,13 +15,11 @@ namespace GameRunner
             ConfigureServices(serviceCollection);
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var logger = serviceProvider.GetService<ILogger<FirstCandidate>>();
-
-            var stats = new Stats();
-
-            const int totalRounds = 200;
+            
+            const int totalRounds = 1;
             var ais = new IGameAi[]
             {
-                new FirstCandidate(logger, stats),
+                new FirstCandidate(logger),
                 new AiCandidates.Random(),
                 new AiCandidates.Random(),
                 new AiCandidates.Random(),
@@ -34,12 +32,16 @@ namespace GameRunner
 
             Console.WriteLine($"Result: {percents[0]:0.00}%, {percents[1]:0.00}%, {percents[2]:0.00}%, {percents[3]:0.00}%");
             Console.WriteLine($"Result: {result[0]}, {result[1]}, {result[2]}, {result[3]}");
-            Console.WriteLine($"Round won {stats.RoundWins}, lost {stats.RoundLoses}, undecided paths {stats.UndecidedPath}");
+			Console.ReadKey();
         }
 
         private static void ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging(configure => configure.AddConsole());
+            services.AddLogging(configure =>
+            {
+                configure.SetMinimumLevel(LogLevel.Trace);
+                configure.AddConsole();
+             });
         }
 
         private static double Percent(int total, int score)

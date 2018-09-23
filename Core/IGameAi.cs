@@ -1,4 +1,3 @@
-using Core;
 using Core.External;
 using System.Collections.Generic;
 
@@ -25,4 +24,10 @@ public interface IGameAi
 	Card Play(Card[] cardsPlayed);
 
 	void TrickFinished(Core.External.TrickResult result);
+
+	/// <summary>
+	/// This is called when round ends
+	/// </summary>
+	/// <param name="scores">Score each seat received</param>
+	void RoundEnded(int[] scores);
 }

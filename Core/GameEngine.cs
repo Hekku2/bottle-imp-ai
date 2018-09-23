@@ -51,20 +51,32 @@ namespace Core
                 }
 
                 var bottleTax = initialMoves.Sum(move => move.ToBottle.Score);
-                for (int i = 0; i < _players.Count(); i++)
+				var scores = Scores(scoreCount, previousWinner.BottleOwner.Index, bottleTax);
+
+				foreach (var player in _players)
+				{
+					player.RoundEnded(scores);
+				}
+
+				for (int i = 0; i < _players.Count(); i++)
                 {
-                    if (previousWinner.BottleOwner.Index == i)
-                    {
-                        finalScores[i] -= bottleTax;
-                    }
-                    else
-                    {
-                        finalScores[i] += scoreCount.Score(i);
-                    }
-                }
+					finalScores[i] += scores[i];
+				}
             }
             return finalScores;
         }
+
+		private static int[] Scores(ScoreCount scoreCount, int bottleOwner, int bottleTax)
+		{
+			return Enumerable.Range(0, scoreCount.Players).Select(index =>
+			{
+				if (index == bottleOwner)
+				{
+					return -bottleTax;
+				}
+				return scoreCount.Score(index);
+			}).ToArray();
+		}
 
         private static Play GetWinner(List<Play> playedCards, int bottlePrice)
         {

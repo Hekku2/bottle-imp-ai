@@ -30,12 +30,13 @@ public static class TrickEngine
 			bottlePrice = winner.Card.Number;
 		}
 
-		var result = new Core.External.TrickResult(bottlePrice, playedCards.Select(p => p.Card).ToArray());
+        var cardsBySeat = playedCards.OrderBy(play => play.Index).Select(play => play.Card);
+		var result = new Core.External.TrickResult(bottlePrice, cardsBySeat.ToArray());
 		foreach (var seat in seats)
 		{
 			seat.Player.TrickFinished(result);
 		}
-		return new TrickResult(bottlePrice, seats[winner.Index], bottleOwner, playedCards.Select(p => p.Card).ToArray());
+		return new TrickResult(bottlePrice, seats[winner.Index], bottleOwner, cardsBySeat.ToArray());
 	}
 
 	private static Play GetWinner(List<Play> playedCards, int bottlePrice)

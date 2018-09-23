@@ -8,9 +8,13 @@ public static class CardContainerExtensions
         return cards.OrderBy(card => card.Number).FirstOrDefault();
     }
 
-    public static Card LowestSafeCard(this IEnumerable<Card> cards, int bottlePrice) 
+    public static Card LowestSafeCard(this IEnumerable<Card> cards, int bottlePrice, Card[] cardsPlayed) 
     {
-        return cards.Where(card => card.Number > bottlePrice).LowestCard();
+        var bottleTaker = cardsPlayed.Where(card => card.Number < bottlePrice).HighestCard();
+
+        return cards.Where(card =>
+            (bottleTaker != null && bottleTaker.Number > card.Number) || 
+            card.Number > bottlePrice).LowestCard();
     }
 
     public static Card LowestWinningCard(this IEnumerable<Card> cards, int currentWinningNumber) 

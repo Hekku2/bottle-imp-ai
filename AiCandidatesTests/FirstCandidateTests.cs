@@ -14,7 +14,7 @@ public class FirstCandidateTests
     public void Setup()
     {
         var mockLogger = Substitute.For<ILogger<FirstCandidate>>();
-        _ai = new FirstCandidate(mockLogger, new Stats());
+        _ai = new FirstCandidate(mockLogger);
     }
 
     [Test]

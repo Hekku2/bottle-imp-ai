@@ -5,6 +5,8 @@ namespace Core.Internal
 {
 	public class ScoreCount
 	{
+		public int Players { get { return _scores.Count;  } }
+
 		private readonly List<ScorePile> _scores;
 
 		public ScoreCount(int players)

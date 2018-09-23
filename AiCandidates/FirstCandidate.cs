@@ -24,12 +24,9 @@ namespace AiCandidates
 
 		private Hand _currentHand;
 
-		private readonly Stats _stats;
-
-		public FirstCandidate(ILogger<FirstCandidate> logger, Stats stats)
+		public FirstCandidate(ILogger<FirstCandidate> logger)
 		{
 			_logger = logger;
-			_stats = stats;
 		}
 
 		public void GameStart(int numberOfPlayers, int numberOfRounds, int seatAtTable)
@@ -45,10 +42,10 @@ namespace AiCandidates
 			var playableCards = GetPlayableCards(startingCard);
 			if (startingCard == null)
 			{
-				_stats.RoundWins += 1;
-				return _currentHand.RemoveCard(playableCards.HighestCard());
+                var card = playableCards.HighestCard();
+                _logger.LogTrace("Starting trick, selecting highest card: {0}", card);
+				return _currentHand.RemoveCard(card);
 			}
-			_stats.RoundLoses += 1;
 
 			var winningCard = WinningCard(cardsPlayed);
 			if (winningCard.Number < _bottlePrice)
@@ -59,7 +56,7 @@ namespace AiCandidates
 					return _currentHand.RemoveCard(myLowest);
 				}
 
-				var lowestSafeCard = playableCards.LowestSafeCard(_bottlePrice);
+				var lowestSafeCard = playableCards.LowestSafeCard(_bottlePrice, cardsPlayed);
 				if (lowestSafeCard != null)
 				{
 					return _currentHand.RemoveCard(lowestSafeCard);
@@ -76,18 +73,19 @@ namespace AiCandidates
 
 				if (lowestWinningCard != null)
 				{
+                    _logger.LogTrace("Found winning card: {0}", lowestWinningCard);
 					return _currentHand.RemoveCard(lowestWinningCard);
 				}
 
-				var lowestSafeCard = playableCards.LowestSafeCard(_bottlePrice);
+                var lowestSafeCard = playableCards.LowestSafeCard(_bottlePrice, cardsPlayed);
 				if (lowestSafeCard != null)
 				{
-					return _currentHand.RemoveCard(lowestSafeCard);
+                    _logger.LogTrace("No win possible, choosing lowest safe card: {0}", lowestSafeCard);
+                    return _currentHand.RemoveCard(lowestSafeCard);
 				}
+                _logger.LogTrace("No safe cards found");
 			}
-
-			_stats.UndecidedPath += 1;
-			return _currentHand.RemoveCard(playableCards.HighestCard());
+			return _currentHand.RemoveCard(playableCards.LowestCard());
 		}
 
 		private Card WinningCard(Card[] cardsPlayed)
@@ -140,7 +138,8 @@ namespace AiCandidates
 		{
 			var winningCard = WinningCard(result.PlayedCards);
 			var myCard = result.PlayedCards[_seatAtTable];
-			_logger.LogInformation("Round finished. Winning card {0}, my card {1}, bottle price {2}", winningCard, myCard, result.BottlePrice);
+			var winnerScore = result.PlayedCards.Sum(card => card.Score);
+			_logger.LogInformation("Trick finished. Winning card {0}, my card {1}, bottle price {2}, winner price: {3}", winningCard, myCard, result.BottlePrice, winnerScore);
 			_bottlePrice = result.BottlePrice;
 		}
 
@@ -155,6 +154,11 @@ namespace AiCandidates
 			_currentHand.RemoveCard(right);
 			_currentHand.RemoveCard(bottle);
 			return new InitialMove(left, right, bottle);
+		}
+
+		public void RoundEnded(int[] scores)
+		{
+			_logger.LogInformation("Round ended, my score {0}, winner score {1}", scores[_seatAtTable], scores.Max());
 		}
 	}
 }

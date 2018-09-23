@@ -1,4 +1,4 @@
-﻿namespace Core
+﻿namespace Core.External
 {
 	public class InitialMove
 	{

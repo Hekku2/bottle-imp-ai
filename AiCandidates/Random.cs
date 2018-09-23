@@ -60,5 +60,10 @@ namespace AiCandidates
 			_currentHand.RemoveCard(bottle);
 			return new InitialMove(left, right, bottle);
 		}
+
+		public void RoundEnded(int[] scores)
+		{
+			//
+		}
 	}
 }
