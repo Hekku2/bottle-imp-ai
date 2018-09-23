@@ -4,7 +4,7 @@ using Core;
 namespace AiCandidatesTests
 {
     [TestFixture]
-    public class ExtensionsTests
+    public class CardContainerExtensionsTests
     {
         [Test]
         public void LowestCard_ReturnsCardWithLowestValue()
