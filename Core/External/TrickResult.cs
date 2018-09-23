@@ -1,4 +1,6 @@
-﻿namespace Core.External
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Core.External
 {
 	public class TrickResult
 	{

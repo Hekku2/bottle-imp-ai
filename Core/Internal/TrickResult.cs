@@ -2,8 +2,21 @@ using Core.Internal;
 
 public class TrickResult
 {
-    public int BottlePrice { get; set; }
-    public Seat Winner { get; set; }
-    public Seat BottleOwner { get; set; }
-    public Card[] WinnerPrice { get; set; }
+	private readonly Card[] _winnerPrice;
+	public int BottlePrice { get; }
+    public Seat Winner { get; }
+    public Seat BottleOwner { get; }
+
+	public TrickResult(int bottlePrice, Seat winner, Seat bottleOwner, Card[] winnerPrice)
+	{
+		BottlePrice = bottlePrice;
+		Winner = winner;
+		BottleOwner = bottleOwner;
+		_winnerPrice = winnerPrice;
+	}
+
+	public Card[] WinnerPrice()
+	{           
+		return (Card[])_winnerPrice.Clone();
+	}
 }

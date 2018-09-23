@@ -49,7 +49,7 @@ namespace Core
 				for (int i = 0; i < minHandSize - 1; i++)
 				{
 					previousWinner = TrickEngine.PlayTrick(previousWinner, seats);
-					scoreCount.Add(previousWinner.Winner.Index, previousWinner.WinnerPrice);
+					scoreCount.Add(previousWinner.Winner.Index, previousWinner.WinnerPrice());
 				}
 
 				for (int i = 0; i < _players.Count(); i++)

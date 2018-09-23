@@ -24,6 +24,6 @@ public class TrickEngineTests
         Assert.AreEqual(seats[2], result.BottleOwner);
         Assert.AreEqual(3, result.BottlePrice);
         Assert.AreEqual(seats[2], result.Winner);
-        Assert.AreEqual(3, result.WinnerPrice.Count());
+        Assert.AreEqual(3, result.WinnerPrice().Count());
     }
 }
