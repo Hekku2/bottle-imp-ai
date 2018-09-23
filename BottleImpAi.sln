@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AiCandidates", "AiCandidate
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{36887616-81EC-4AAE-9693-33D742C6A5F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreTests", "CoreTests\CoreTests.csproj", "{826F21A2-2950-49D4-942F-9FF046E20A72}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTests", "CoreTests\CoreTests.csproj", "{826F21A2-2950-49D4-942F-9FF046E20A72}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AiCandidatesTests", "AiCandidatesTests\AiCandidatesTests.csproj", "{9562450A-9452-41F2-891E-9FE80749DDCD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AiCandidatesTests", "AiCandidatesTests\AiCandidatesTests.csproj", "{9562450A-9452-41F2-891E-9FE80749DDCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +47,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{826F21A2-2950-49D4-942F-9FF046E20A72} = {36887616-81EC-4AAE-9693-33D742C6A5F8}
+		{9562450A-9452-41F2-891E-9FE80749DDCD} = {36887616-81EC-4AAE-9693-33D742C6A5F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {23A15132-E284-40B8-B67D-685B4F1523FF}
