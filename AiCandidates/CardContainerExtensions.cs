@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public static class Extensions
+public static class CardContainerExtensions
 {
     public static Card LowestCard(this IEnumerable<Card> cards) 
     {
