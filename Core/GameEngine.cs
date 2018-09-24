@@ -15,7 +15,7 @@ namespace Core
             _players = players.ToArray();
         }
 
-        public int[] Run()
+        public int[] Play()
         {
             var finalScores = new int[_players.Count()];
 

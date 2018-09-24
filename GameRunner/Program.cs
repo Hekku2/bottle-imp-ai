@@ -25,7 +25,7 @@ namespace GameRunner
                 new AiCandidates.Random(),
             };
             var engine = new GameEngine(totalRounds, ais);
-            var result = engine.Run();
+            var result = engine.Play();
 
             var total = result.Sum();
             var percents = result.Select(r => Percent(total, r)).ToList();
