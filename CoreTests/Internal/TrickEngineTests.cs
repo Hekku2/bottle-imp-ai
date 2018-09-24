@@ -23,7 +23,7 @@ namespace CoreTests.Internal
 				return seat;
 			}).ToArray();
 
-			var result = TrickEngine.PlayTrick(null, seats);
+			var result = new TrickEngine(seats).PlayTrick(null);
 			Assert.NotNull(result);
 			Assert.AreEqual(seats[2], result.BottleOwner);
 			Assert.AreEqual(3, result.BottlePrice);
@@ -42,8 +42,8 @@ namespace CoreTests.Internal
 				var seat = new Seat(index, player, hand);
 				return seat;
 			}).ToArray();
-			var result = TrickEngine.PlayTrick(null, seats);
-			Assert.IsNull(result.BottleOwner);
+			var result = new TrickEngine(seats).PlayTrick(null);
+            Assert.IsNull(result.BottleOwner);
 			Assert.AreEqual(StartingBottlePrice, result.BottlePrice);
 			Assert.AreEqual(seats[2], result.Winner);
 			Assert.AreEqual(3, result.WinnerPrice().Count());
